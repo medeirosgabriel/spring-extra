@@ -1,0 +1,5 @@
+Login: curl -v -X POST localhost:8081/login -H 'Content-Type: application/json' -d '{"email": "maria@gmail.com", "password": "123456"}'
+Response: Cookie: "token=eyJ0eXAiOiJKV1QiLCJ..."
+
+Get User: curl -v -X GET --cookie "token=eyJ0eXAiOiJKV1QiLCJ..." localhost:8081/users/maria@gmail.com
+Reponse: {"email":"maria@gmail.com","name":"Maria Brown","password":"123456"}

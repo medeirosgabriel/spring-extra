@@ -1,0 +1,7 @@
+Cadastrar Usuário: curl -X POST localhost:8081/api/v1/auth -H 'Content-Type: application/json' -d '{"email": "gabrielpm@gmail.com", "nome": "Gabriel", "senha": "12345678"}'
+------
+Login: curl -X POST localhost:8081/api/v1/auth/login -H 'Content-Type: application/json' -d '{"email": "gabrielpm@gmail.com", "senha": "12345678"}'
+Login Response:{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9..."}
+------
+Test: curl -X GET localhost:8081/api/v1/auth/test -H 'Conion/json' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9...'
+Response: gabrielpm@gmail.com
