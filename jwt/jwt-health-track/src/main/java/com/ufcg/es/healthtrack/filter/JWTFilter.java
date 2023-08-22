@@ -34,9 +34,9 @@ public class JWTFilter extends GenericFilter {
 
         if (header == null || !header.startsWith("Bearer ")) {
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                    "Token inexistente ou mal formatado!");
+                    "Inexist Token or Bad Token!");
             return;
-            // throw new ServletException("Token inexistente ou mal formatado!");
+            // throw new ServletException("Inexist Token or Bad Token!");
         }
 
         String token = header.substring(TOKEN_INDEX);
@@ -48,6 +48,7 @@ public class JWTFilter extends GenericFilter {
         	
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
             return;
+
             // a requisição nem precisa passar adiante, retornar já para o cliente pois não
             // pode prosseguir daqui pra frente
             // por falta de autorização

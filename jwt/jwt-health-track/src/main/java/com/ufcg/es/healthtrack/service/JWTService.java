@@ -1,9 +1,9 @@
 package com.ufcg.es.healthtrack.service;
 
 import com.ufcg.es.healthtrack.filter.JWTFilter;
-import com.ufcg.es.healthtrack.model.dto.Credenciais;
-import com.ufcg.es.healthtrack.model.dto.LoginResponse;
-import com.ufcg.es.healthtrack.util.CredenciaisInvalidasException;
+import com.ufcg.es.healthtrack.dto.CredentialsDTO;
+import com.ufcg.es.healthtrack.dto.LoginResponseDTO;
+import com.ufcg.es.healthtrack.exceptions.InvalidCredentialsException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
@@ -18,34 +18,34 @@ public class JWTService {
     public static final String TOKEN_KEY = "asdfasdfasdfsfdsawaer";
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserService userService;
 
-    public LoginResponse autentica(Credenciais credenciais) throws CredenciaisInvalidasException{
+    public LoginResponseDTO authenticate(CredentialsDTO credentials) throws InvalidCredentialsException {
 
-        validaUsuario(credenciais);
-        String token = geraToken(credenciais);
+        validateUser(credentials);
+        String token = createToken(credentials);
 
-        return new LoginResponse(token);
+        return new LoginResponseDTO(token);
     }
 
-    private void validaUsuario(Credenciais credenciais) {
-        if (!this.usuarioService.validaUsuario(credenciais.getEmail(),credenciais.getSenha())){
-            throw new CredenciaisInvalidasException("Credenciais Inválidas.");
+    private void validateUser(CredentialsDTO credentialsDTO) {
+        if (!this.userService.validateUser(credentialsDTO.getEmail(), credentialsDTO.getPassword())){
+            throw new InvalidCredentialsException("Invalid Credentials.");
         }
     }
 
-    private String geraToken(Credenciais credenciais) {
+    private String createToken(CredentialsDTO credentialsDTO) {
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(credenciais.getEmail())
+                .setSubject(credentialsDTO.getEmail())
                 .signWith(SignatureAlgorithm.HS512, TOKEN_KEY)
                 .setExpiration(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 .compact();
     }
 
-    public String getEmailUsuarioLogado(String authorizationHeader) {
+    public String getEmailLoggedUser(String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new SecurityException("Token inexistente ou mal formatado!");
+            throw new SecurityException("Inexist Token or Bad Token!");
         }
 
         // Extraindo apenas o token do cabecalho.
@@ -55,7 +55,7 @@ public class JWTService {
         try {
             subject = Jwts.parser().setSigningKey(TOKEN_KEY).parseClaimsJws(token).getBody().getSubject();
         } catch (SignatureException e) {
-            throw new SecurityException("Token invalido ou expirado!");
+            throw new SecurityException("Invalid Token or Expired Token!");
         }
         return subject;
     }

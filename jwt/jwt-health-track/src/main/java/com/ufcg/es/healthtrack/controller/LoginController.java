@@ -1,9 +1,9 @@
 package com.ufcg.es.healthtrack.controller;
 
-import com.ufcg.es.healthtrack.model.dto.Credenciais;
-import com.ufcg.es.healthtrack.model.dto.LoginResponse;
+import com.ufcg.es.healthtrack.dto.CredentialsDTO;
+import com.ufcg.es.healthtrack.dto.LoginResponseDTO;
 import com.ufcg.es.healthtrack.service.JWTService;
-import com.ufcg.es.healthtrack.util.CredenciaisInvalidasException;
+import com.ufcg.es.healthtrack.exceptions.InvalidCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +20,11 @@ public class LoginController {
     private JWTService jwtService;
 
     @PostMapping
-    public ResponseEntity<LoginResponse> loginUsuario(@RequestBody Credenciais credenciais) {
+    public ResponseEntity<LoginResponseDTO> loginUsuario(@RequestBody CredentialsDTO credentialsDTO) {
       try {
-          return new ResponseEntity<LoginResponse>(jwtService.autentica(credenciais), HttpStatus.OK);
-      } catch (CredenciaisInvalidasException e) {
-          return new ResponseEntity<LoginResponse>(new LoginResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+          return new ResponseEntity<LoginResponseDTO>(jwtService.authenticate(credentialsDTO), HttpStatus.OK);
+      } catch (InvalidCredentialsException e) {
+          return new ResponseEntity<LoginResponseDTO>(new LoginResponseDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
       }
     }
 }
