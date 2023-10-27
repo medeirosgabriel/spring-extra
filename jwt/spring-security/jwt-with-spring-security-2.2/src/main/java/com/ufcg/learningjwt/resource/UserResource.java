@@ -23,7 +23,7 @@ public class UserResource {
 	private UserService userService;
 	
 	@PostMapping
-	public ResponseEntity<User> insertUser(@RequestBody UserDTO user, HttpServletResponse response) {
+	public ResponseEntity<User> insertUser(@RequestBody UserDTO user) {
 		User newUser = this.userService.insertUser(user);
 		return ResponseEntity.ok(newUser);
 	}
