@@ -1,6 +1,8 @@
 package com.medeirosgabriel.jwtapp.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.medeirosgabriel.jwtapp.dto.TokenDTO;
 import com.medeirosgabriel.jwtapp.model.Credentials;
 import com.medeirosgabriel.jwtapp.model.User;
 import io.jsonwebtoken.Jwts;
@@ -16,6 +18,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +74,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
 
-        response.getWriter().write(email + ": " + token);
-        response.getWriter().flush();
+        response.setContentType("application/json");
+        PrintWriter writer = response.getWriter();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        TokenDTO tokenDTO = TokenDTO.builder().tokenType("Bearer").token(token).expires_in(3600000L).build();
+        String json = ow.writeValueAsString(tokenDTO);
+        writer.write(json);
+        writer.flush();
     }
 }
